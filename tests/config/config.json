@@ -1,0 +1,27 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "first-wp-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/firstWp/FirstWpWebPart.js",
+          "manifest": "./src/webparts/firstWp/FirstWpWebPart.manifest.json"
+        }
+      ]
+    },
+    "first-extension-application-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/firstExtension/FirstExtensionApplicationCustomizer.js",
+          "manifest": "./src/extensions/firstExtension/FirstExtensionApplicationCustomizer.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "FirstWpWebPartStrings": "lib/webparts/firstWp/loc/{locale}.js",
+    "FirstExtensionApplicationCustomizerStrings": "lib/extensions/firstExtension/loc/{locale}.js"
+  }
+}
