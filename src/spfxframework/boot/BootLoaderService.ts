@@ -3,11 +3,13 @@ import { SPHttpClient } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';
 import { Promise } from 'es6-promise';
 import { isNullOrEmpty } from '@spfxappdev/utility';
+import { SPfxAppDevConfiguration } from '../config/Configuration';
 
 export interface IBootLoaderService {
     getPageContext(): PageContext;
     getSPHttpClient(): SPHttpClient;
     getServiceScope(): ServiceScope;
+    getGlobalBootloader(): any;
     onLoad(promises: Array<Promise<void>>): Promise<void>;
 }
 
@@ -24,9 +26,13 @@ export class BootLoaderService implements IBootLoaderService {
             this.spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
             this.pageContext = serviceScope.consume(PageContext.serviceKey);
 
-            (window as any).SPFxAppDevBootloader = (window as any).SPFxAppDevBootloader || {};
-            (window as any).SPFxAppDevBootloader.pageContext = this.pageContext;
+            const bootloader = this.getGlobalBootloader();
+            bootloader.pageContext = this.pageContext;
         });
+    }
+
+    public getGlobalBootloader(): any {
+        (window as any)[SPfxAppDevConfiguration.bootLoaderName] = (window as any)[SPfxAppDevConfiguration.bootLoaderName] || {};
     }
 
     public getPageContext(): PageContext {

@@ -112,10 +112,10 @@ export abstract class SPFxAppDevClientSideWebPart<WPProps = ISPFxAppDevClientSid
                 this.Bootloader = this.context.serviceScope.consume(BootLoaderService.serviceKey);
                 
                 this.Bootloader.onLoad(this.getRequiredDataForBoot()).then(() => {
-                    if(this.helper.functions.isset(this.GeneralSettings)) {
-                        // this.EnableConsoleLogging = this.GeneralSettings.ConsoleLogging;
-                        // this.Bootloader.setConsoleProperties(this.EnableConsoleLogging);
-                    }
+                    // if(this.helper.functions.isset(this.GeneralSettings)) {
+                    //     // this.EnableConsoleLogging = this.GeneralSettings.ConsoleLogging;
+                    //     // this.Bootloader.setConsoleProperties(this.EnableConsoleLogging);
+                    // }
 
                     return resolve();
                 }).catch((error) => {
@@ -131,7 +131,10 @@ export abstract class SPFxAppDevClientSideWebPart<WPProps = ISPFxAppDevClientSid
             key: GeneralSettings.key,
             defaultSettings: GeneralSettings.defaultSettings,
             refreshCache: false,
-            onLoaded: (settings: IGeneralSettings) => { this.GeneralSettings = settings; }
+            onLoaded: (settings: IGeneralSettings) => { 
+                this.GeneralSettings = settings;
+                Logger.DefaultSettings.LogLevel = this.GeneralSettings.ConsoleLoggingLevel;
+            }
         };
         
         return [generalSettings];
