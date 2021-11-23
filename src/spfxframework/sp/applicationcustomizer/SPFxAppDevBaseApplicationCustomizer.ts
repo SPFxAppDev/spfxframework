@@ -5,14 +5,15 @@ import { GeneralHelper, ISPFxAppDevBaseHelper } from '../BaseHelper';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { override } from '@microsoft/decorators';
 import '@spfxappdev/utility/lib/extensions/StringExtensions';
-import { SolutionId } from '../../config/Configuration';
+import { SPfxAppDevConfiguration } from '../../config/Configuration';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 import { cssClasses } from '@spfxappdev/utility';
-import { ISettings, ISettingsReaderService, SettingsReaderService } from '../../settings/SettingsReaderService';
+import { ISettingsReaderService, SettingsReaderService } from '../../settings/SettingsReaderService';
 import { BootLoaderService, IBootLoaderService } from '../../boot/BootLoaderService';
 import { IGeneralSettings } from '../../settings/GeneralSettings.interfaces';
 import { GeneralSettings } from '../../settings/GeneralSettings';
 import { SettingsLoader } from '../SettingsLoader';
+import { ISettings } from '../../settings/ISettings.interface';
 
 export interface IApplicationCustomizerProps {}
 
@@ -33,7 +34,12 @@ export abstract class SPFxAppDevBaseApplicationCustomizer<TProperties> extends B
     }
 
     public showExtension(): Promise<boolean> {
-        const endpoint: string = this.helper.url.MakeAbsoluteSiteUrl(`/_api/web/AppTiles?$filter=(AppPrincipalId ne '') and (ProductId eq guid'${SolutionId}')&$select=AppStatus`);
+
+        if(this.helper.functions.isNullOrEmpty(SPfxAppDevConfiguration.solutionId)) {
+            return Promise.resolve(true);
+        }
+
+        const endpoint: string = this.helper.url.MakeAbsoluteSiteUrl(`/_api/web/AppTiles?$filter=(AppPrincipalId ne '') and (ProductId eq guid'${SPfxAppDevConfiguration.solutionId}')&$select=AppStatus`);
 
         return new Promise<boolean>((resolve, reject) => {
             this.context.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {

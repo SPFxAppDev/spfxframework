@@ -4,16 +4,17 @@ import { PageContext } from '@microsoft/sp-page-context';
 import { clearLocalCache, localCache } from '@spfxappdev/storage';
 import { isset, extend, isNullOrEmpty } from '@spfxappdev/utility';
 import { SPUri, Uri } from '../utility/UrlHelper';
-import { GeneralSettings, IGeneralSettings } from './';
-import { settingsListUrl } from '../config/Configuration';
+import { GeneralSettings } from './GeneralSettings';
+import { IGeneralSettings } from './GeneralSettings.interfaces';
+import { SPfxAppDevConfiguration } from '../config/Configuration';
+import { ISettings } from './ISettings.interface';
+import { ISettingsWriterService, SettingsWriterService } from './SettingsWriterService';
+import { Logger, LogType } from '@spfxappdev/logger';
 
 
 export interface ISettingsReaderService {
     getSettings<T = ISettings>(key: string, defaultSettings: T, refreshCache?: boolean): Promise<T>;
-}
-
-export interface ISettings {
-    
+    clearFromCache(key: string): void;
 }
 
 interface ISettingsContainerKeyValue {
@@ -37,6 +38,7 @@ export class SettingsReaderService implements ISettingsReaderService {
     private settingsWebAndSiteContainer: ISettingsWebAndSiteContainer;
     private settingsContainer: ISettingsContainer;
     private generalSettings: IGeneralSettings;
+    private settingsWriter: ISettingsWriterService;
 
     private get webAndSiteKey(): string {
         const siteId = this.pageContext.site.id.toString().replace(/[^\w\s]/gi, '');
@@ -48,6 +50,7 @@ export class SettingsReaderService implements ISettingsReaderService {
         serviceScope.whenFinished(() => {
             this.spHttpClient = serviceScope.consume(SPHttpClient.serviceKey);
             this.pageContext = serviceScope.consume(PageContext.serviceKey);
+            this.settingsWriter = serviceScope.consume(SettingsWriterService.serviceKey);
             (window as any).SPFxAppDevSettings = (window as any).SPFxAppDevSettings||{};
             this.settingsWebAndSiteContainer = (window as any).SPFxAppDevSettings as ISettingsWebAndSiteContainer;
 
@@ -84,28 +87,38 @@ export class SettingsReaderService implements ISettingsReaderService {
                 };
             }
 
-            this.log(`SSC load settings with key: ${key}`);
+            this.log(`load settings with key: ${key}`);
             if (this.settingsContainer[key].IsLoading === false && this.settingsContainer[key].IsLoaded === false) {
                 this.settingsContainer[key].IsLoading = true;
-                this.log(`SSC wait while loading key '${key}' from SP`);
+                this.log(`wait while loading key '${key}' from SP`);
+
                 this.getSettingsFromSite(key, defaultSettings).then((settings: T) => {
                     this.setInContainer(key, settings);
-                    this.log([`SSC successfully loaded '${key}' from SP`, this.settingsContainer[key].Settings]);
+                    this.log([`successfully loaded '${key}' from SP`, this.settingsContainer[key].Settings]);
                     return resolve(this.settingsContainer[key].Settings as T);
                 });
             }
             else {
                 const getterInterval: number = window.setInterval(() => {
-                    this.log(`SSC wait while loading key '${key}' from first request`);
+                    this.log(`wait while loading key '${key}' from first request`);
                     if (this.settingsContainer[key].IsLoaded) {
                         window.clearInterval(getterInterval);
                         const settingsValue: T = this.settingsContainer[key].Settings as T;
-                        this.log([`SSC successfully loaded '${key}' from first request`, settingsValue]);
+                        this.log([`successfully loaded '${key}' from first request`, settingsValue]);
                         return resolve(settingsValue);
                     }
                 }, 500);
             }
         });
+    }
+
+    @clearLocalCache({
+        key(key: string): string {
+            return (this as SettingsReaderService).getCacheKey(key);
+        }
+    })
+    public clearFromCache(key: string): void {
+
     }
 
     private getCacheKey(key: string): string {
@@ -134,12 +147,17 @@ export class SettingsReaderService implements ISettingsReaderService {
         this.settingsContainer[key].Settings = settings;
     }
 
-    private log(val: any): void {
-        console.log(val);
+    private log(...val: any[]): void {
+        Logger.Log("SettingsReaderService", LogType.Log, ...val);
     }
 
     private getSettingsFromSite<T = ISettings>(key: string, defaultSettings: T): Promise<T> {
         return new Promise<T>((resolve, reject) => {
+
+            if(isNullOrEmpty(SPfxAppDevConfiguration.settingsListUrl)) {
+                this.log("The settings list does not set, skip get settings from library and return defaultSettings");
+                return resolve(defaultSettings);
+            }
 
             if(key == GeneralSettings.key) {
                 this.getSettingsFromCurrentSite(key, defaultSettings).then((generalSettings: any) => {
@@ -202,22 +220,33 @@ export class SettingsReaderService implements ISettingsReaderService {
             urlhelper.Combine(serverRelativeWebUrl);
             urlhelper.Combine(`_api/web/GetFileByServerRelativeUrl('${this.getListFileEndpoint(serverRelativeWebUrl, key)}')/$value`);
             let endpoint: string = urlhelper.toString();
-            
             this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 
                 response.json().then((settings: T) => {
-                    return resolve(extend(defaultSettings, settings));
+                    let settingsToReturn: T = extend(defaultSettings, settings);
+
+                    if(response.status == 404) {
+                        let settingsToReturn: T = extend(defaultSettings, {});
+                        this.settingsWriter.setSettings(key, settingsToReturn);
+                    }
+                    
+                    return resolve(settingsToReturn);
                 }).catch((error) => {
-                    return resolve(extend(defaultSettings, {}));
+                    const settingsToReturn: T = extend(defaultSettings, {});
+                    this.settingsWriter.setSettings(key, settingsToReturn);
+                    return resolve(settingsToReturn);
                 });
             }).catch((error) => {
-                return resolve(extend(defaultSettings, {}));
+                const settingsToReturn: T = extend(defaultSettings, {});
+                this.settingsWriter.setSettings(key, settingsToReturn);
+                return resolve(settingsToReturn);
             });
+            
         });
     }
 
     private getListFileEndpoint(settingsSiteUrl: string, key): string {
         //TODO: EDIT ==> URL Helper
-        return settingsSiteUrl + '/' + settingsListUrl + '/' + key + ".json";
+        return settingsSiteUrl + '/' + SPfxAppDevConfiguration.settingsListUrl + '/' + key + ".json";
     }
 }

@@ -1,13 +1,8 @@
-//TODO: UPDATE File and remove not needed properties (settings)
-/**
- * This is the Url for the Settings-List.
- */
-export const settingsListUrl: string = 'Shared%20Documents';
+export abstract class SPfxAppDevConfiguration {
 
-// TODO: Remove the Settings in the Classes and make it static
+    public static settingsListUrl: string = '';
 
-export const settingsListExists: boolean = false;
+    public static solutionId: string = "";
 
-export const SolutionId: string = '<%= SolutionGuid%>';
-
-export const BootLoaderName: string = 'SPFxAppDevBootloader_<%= SolutionGuid%>';
+    public static bootLoaderName: string = `SPFxAppDevBootloader_${SPfxAppDevConfiguration.solutionId}`;
+}
