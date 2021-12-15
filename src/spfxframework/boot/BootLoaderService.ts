@@ -33,6 +33,7 @@ export class BootLoaderService implements IBootLoaderService {
 
     public getGlobalBootloader(): any {
         (window as any)[SPfxAppDevConfiguration.bootLoaderName] = (window as any)[SPfxAppDevConfiguration.bootLoaderName] || {};
+        return (window as any)[SPfxAppDevConfiguration.bootLoaderName];
     }
 
     public getPageContext(): PageContext {
