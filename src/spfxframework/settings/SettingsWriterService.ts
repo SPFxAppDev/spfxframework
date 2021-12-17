@@ -42,9 +42,9 @@ export class SettingsWriterService implements ISettingsWriterService {
     public setSettings<T = ISettings>(key: string, settings: T): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             if(issetDeep(window, `SPFxAppDevSettings.${this.webAndSiteKey}.${key}`)) {
-                delete (window as any).SPFxAppDevSettings[this.webAndSiteKey][key];
+                (window as any).SPFxAppDevSettings[this.webAndSiteKey][key].IsLoaded = false;
             }
-            
+
             this.setSettingsToLibrary(this.pageContext.site.serverRelativeUrl, key, settings).then((savedSettings: T) => {
                 return resolve(savedSettings);
             });

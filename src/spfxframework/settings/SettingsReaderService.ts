@@ -68,7 +68,18 @@ export class SettingsReaderService implements ISettingsReaderService {
             return (this as SettingsReaderService).getCacheKey(key);
         },
         when(key: string, defaultSettings: any, refreshCache: boolean): boolean {
-            return refreshCache||false;
+
+            if(refreshCache) {
+                const self = (this as SettingsReaderService);
+                
+                if(issetDeep(window, `SPFxAppDevSettings.${self.webAndSiteKey}.${key}`)) {
+                    delete (window as any).SPFxAppDevSettings[self.webAndSiteKey][key];
+                }
+
+                return true;
+            }
+
+            return false;
         }
     })
     @localCache({
@@ -77,16 +88,17 @@ export class SettingsReaderService implements ISettingsReaderService {
         } 
     })
     public getSettings<T = ISettings>(key: string, defaultSettings: T, refreshCache: boolean = false): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            if(!isset(this.settingsContainer[key])) {
-                this.settingsContainer[key] = {
-                    IsLoaded: false,
-                    IsLoading: false,
-                    key: key,
-                    Settings: null
-                };
-            }
 
+        if(!isset(this.settingsContainer[key])) {
+            this.settingsContainer[key] = {
+                IsLoaded: false,
+                IsLoading: false,
+                key: key,
+                Settings: null
+            };
+        }
+
+        return new Promise<T>((resolve, reject) => {
             this.log(`load settings with key: ${key}`);
             if (this.settingsContainer[key].IsLoading === false && this.settingsContainer[key].IsLoaded === false) {
                 this.settingsContainer[key].IsLoading = true;
@@ -228,7 +240,7 @@ export class SettingsReaderService implements ISettingsReaderService {
                     let settingsToReturn: T = extend(defaultSettings, settings);
 
                     if(response.status == 404) {
-                        let settingsToReturn: T = extend(defaultSettings, {});
+                        settingsToReturn = extend(defaultSettings, {});
                         this.settingsWriter.setSettings(key, settingsToReturn);
                     }
                     
