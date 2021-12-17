@@ -2,7 +2,7 @@ import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';
 import { clearLocalCache, localCache } from '@spfxappdev/storage';
-import { isset, extend, isNullOrEmpty } from '@spfxappdev/utility';
+import { isset, extend, isNullOrEmpty, issetDeep } from '@spfxappdev/utility';
 import { SPUri, Uri } from '../utility/UrlHelper';
 import { GeneralSettings } from './GeneralSettings';
 import { IGeneralSettings } from './GeneralSettings.interfaces';
@@ -118,7 +118,9 @@ export class SettingsReaderService implements ISettingsReaderService {
         }
     })
     public clearFromCache(key: string): void {
-
+        if(issetDeep(window, `SPFxAppDevSettings.${this.webAndSiteKey}.${key}`)) {
+            delete (window as any).SPFxAppDevSettings[this.webAndSiteKey][key];
+        }
     }
 
     private getCacheKey(key: string): string {

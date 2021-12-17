@@ -2,7 +2,7 @@ import { ServiceKey, ServiceScope } from '@microsoft/sp-core-library';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { PageContext } from '@microsoft/sp-page-context';
 import { clearLocalCache } from '@spfxappdev/storage';
-import { extend, isNullOrEmpty } from '@spfxappdev/utility';
+import { extend, isNullOrEmpty, issetDeep } from '@spfxappdev/utility';
 import { SPUri, Uri } from '../utility/UrlHelper';
 import { SPfxAppDevConfiguration } from '../config/Configuration';
 import { ISettings } from './ISettings.interface';
@@ -41,6 +41,10 @@ export class SettingsWriterService implements ISettingsWriterService {
     })
     public setSettings<T = ISettings>(key: string, settings: T): Promise<T> {
         return new Promise<T>((resolve, reject) => {
+            if(issetDeep(window, `SPFxAppDevSettings.${this.webAndSiteKey}.${key}`)) {
+                delete (window as any).SPFxAppDevSettings[this.webAndSiteKey][key];
+            }
+            
             this.setSettingsToLibrary(this.pageContext.site.serverRelativeUrl, key, settings).then((savedSettings: T) => {
                 return resolve(savedSettings);
             });
