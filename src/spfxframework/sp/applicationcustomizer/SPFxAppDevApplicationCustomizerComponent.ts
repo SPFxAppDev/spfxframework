@@ -1,5 +1,5 @@
 
-import { LogType } from '@spfxappdev/logger';
+import { Logger, LogType } from '@spfxappdev/logger';
 import { ISPFxAppDevBaseHelper } from '../BaseHelper';
 import '@spfxappdev/utility/lib/extensions/StringExtensions';
 import { cssClasses } from '@spfxappdev/utility';
@@ -14,6 +14,8 @@ export abstract class SPFxAppDevApplicationCustomizerComponent<APP extends SPFxA
 
     protected App: APP;
 
+    public logger: Logger;
+
     /**
      * Contains multiple helpful Functions.
      */
@@ -25,15 +27,15 @@ export abstract class SPFxAppDevApplicationCustomizerComponent<APP extends SPFxA
         super(props, state);
         const properties: any = props as any as ISPFxAppDevApplicationCustomizerComponentProps<APP>;
         this.App = properties.ApplicationCustomizer;
+        this.logger = this.App.logger;
         this.helper = this.App.helper;
     }
 
     /**
      * Log's the provided Value in the Console under the loggingCategory of the ApplicationCustomizer.
      * @param logValue The Value to Log in the Console.
-     * @param logType The Type of Logging (Warning, Info, Error, Table or Log).
      */
-    protected log(logValue: any, logType: LogType = LogType.Log): void {
-        this.App.log(logValue, logType);
+    protected log(logValue: any): void {
+        this.App.log(logValue);
     }
 }

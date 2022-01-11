@@ -2,7 +2,7 @@ import '@spfxappdev/utility/lib/extensions/StringExtensions';
 import { cssClasses } from '@spfxappdev/utility';
 import { SPFxAppDevBaseWebPart, ISPFxAppDevClientSideWebPartProps } from './SPFxAppDevBaseWebPart';
 import { ISPFxAppDevBaseHelper } from '../BaseHelper';
-import { LogType } from '@spfxappdev/logger';
+import { Logger } from '@spfxappdev/logger';
 import * as React from 'react';
 
 export interface ISPFxAppDevWebPartComponentProps<T> {
@@ -16,6 +16,8 @@ export abstract class SPFxAppDevWebPartComponent<WP extends SPFxAppDevBaseWebPar
 
     protected WebPart: WP;
 
+    public logger: Logger;
+
     /**
      * Contains multiple helpful Functions.
      */
@@ -25,15 +27,15 @@ export abstract class SPFxAppDevWebPartComponent<WP extends SPFxAppDevBaseWebPar
         super(props);
         const properties: any = props as any as ISPFxAppDevWebPartComponentProps<WP>;
         this.WebPart = properties.WebPart;
+        this.logger = this.WebPart.logger;
         this.helper = this.WebPart.helper;
     }
 
     /**
      * Log's the provided Value in the Console under the loggingCategory of the Webpart.
      * @param logValue The Value to Log in the Console.
-     * @param logType The Type of Logging (Warning, Info, Error, Table or Log).
      */
-    protected log(logValue: any, logType: LogType = LogType.Log): void {
-        this.WebPart.log(logValue, logType);
+    protected log(logValue: any): void {
+        this.WebPart.log(logValue);
     }
 }

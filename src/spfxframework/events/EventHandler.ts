@@ -1,6 +1,8 @@
 
+import { Guid } from '@microsoft/sp-core-library';
 import { isNullOrEmpty } from '@spfxappdev/utility';
 import '@spfxappdev/utility/lib/extensions/ArrayExtensions';
+
 
 export interface IEventListener {
     Sequence: number;
@@ -16,7 +18,20 @@ export interface IEventListenerResult {
 
 export class EventHandler {
 
-    public static Listen(name: string, listener: IEventListener): void  {
+    private static allUniqueEventIds: string[] = [];
+
+    public static Listen(name: string, listener: IEventListener, uniqueEventId?: string): void  {
+
+        if(isNullOrEmpty(uniqueEventId)) {
+            uniqueEventId = Guid.newGuid().toString();
+        }
+
+        if(EventHandler.allUniqueEventIds.IndexOf(id => id.Equals(uniqueEventId, true)) >= 0) {
+            return;
+        }
+
+        EventHandler.allUniqueEventIds.push(uniqueEventId);
+
         EventHandler.register(name, listener);
     }
 
@@ -33,7 +48,7 @@ export class EventHandler {
 
         for (let i: number = 0; i < sortedListener.length; i++) {
             const listener: IEventListener = sortedListener[i];
-            lastEventResult = listener.Execute(name, lastEventResult, args);
+            lastEventResult = listener.Execute(name, lastEventResult, ...args);
 
             if (isNullOrEmpty(lastEventResult) ||
             lastEventResult.ErrorOccurred) {
