@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styles from './FirstWp.module.scss';
 import { SPFxAppDevWebPartComponent, ISPFxAppDevWebPartComponentProps } from '@spfxappdev/framework';
+// import { SPFxAppDevWebPartComponent, ISPFxAppDevWebPartComponentProps } from '../../../../../lib';
 import FirstWpWebPart from '../FirstWpWebPart';
 
 interface IFirstWpState {

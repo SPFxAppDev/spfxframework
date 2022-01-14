@@ -18,3 +18,5 @@ If you get some errors with Promises and the missing "finally"-Methode, install 
 ## Usage
 
 TBD
+
+For examples or documentation see [GitHub repository](https://github.com/SPFxAppDev/spfxframework#readme)

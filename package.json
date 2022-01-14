@@ -1,6 +1,6 @@
 {
   "name": "@spfxappdev/framework",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -37,6 +37,6 @@
   "dependencies": {
     "@spfxappdev/logger": "^1.0.2",
     "@spfxappdev/storage": "^1.0.0",
-    "@spfxappdev/utility": "^1.0.0"
+    "@spfxappdev/utility": "^1.0.1"
   }
 }

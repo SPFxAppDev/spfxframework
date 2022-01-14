@@ -3,6 +3,7 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import { IPropertyPaneConfiguration, PropertyPaneTextField } from '@microsoft/sp-property-pane';
 import { ISPFxAppDevClientSideWebPartProps, SPFxAppDevClientSideWebPart } from '@spfxappdev/framework';
+// import { ISPFxAppDevClientSideWebPartProps, SPFxAppDevClientSideWebPart } from '../../../../lib';
 import FirstWp,  { IFirstWpProps } from './components/FirstWp';
 
 export interface IFirstWpWebPartProps extends ISPFxAppDevClientSideWebPartProps {
@@ -31,9 +32,9 @@ export default class FirstWpWebPart extends SPFxAppDevClientSideWebPart<IFirstWp
         ReactDom.unmountComponentAtNode(this.domElement);
     }
 
-    protected get dataVersion(): Version {
-        return Version.parse('1.0');
-    }
+    // protected get dataVersion(): Version {
+    //     return Version.parse('1.0');
+    // }
 
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
       return {
