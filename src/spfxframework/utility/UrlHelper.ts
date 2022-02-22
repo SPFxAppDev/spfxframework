@@ -206,7 +206,7 @@ export class Uri implements IUrlContext {
 
         if (relativeUrl.length > 0 &&
             urlToCombine.Contains(relativeUrl)) {
-            urlToCombine.substr(urlToCombine.IndexOf(relativeUrl) + urlToCombine.length);
+            urlToCombine = urlToCombine.substr(urlToCombine.IndexOf(relativeUrl) + urlToCombine.length);
         }
 
         if (urlToCombine.StartsWith('/')) {

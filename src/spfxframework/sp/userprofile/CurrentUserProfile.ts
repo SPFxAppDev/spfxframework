@@ -223,16 +223,11 @@ export class UserProfile {
 
             ctx.spHttpClient.get(enpointNew, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
                 response.json().then((responseJSON: any) => {
-                    if (responseJSON === undefined) {
+                    if (responseJSON === undefined || responseJSON === null) {
                         return reject(undefined);
                     }
 
                     const element: any = responseJSON;
-
-                    if (element === undefined || element === null) {
-                        return reject(undefined);
-                    }
-
                     const contact: UserProfile = UserProfile.ConvertTo(element);
                     contact.DelveProfile = delveEndpoint + '/_layouts/15/me.aspx/?p=' + contact.Email + '&v=work';
 

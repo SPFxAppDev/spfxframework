@@ -10,8 +10,8 @@ export class DomHelper {
                 maxIntervals--;
                 const element: NodeListOf<Element> = document.body.querySelectorAll(selector);
 
-                elementExists = element != null &&
-                typeof element !== 'undefined' &&
+                elementExists = typeof element !== 'undefined' && 
+                element != null &&
                 element.length > 0;
 
                 if (maxIntervals <= 0) {

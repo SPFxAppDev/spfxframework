@@ -1,5 +1,5 @@
 
-import { Logger, LogType } from '@spfxappdev/logger';
+import { Logger } from '@spfxappdev/logger';
 import { ISPFxAppDevBaseHelper } from '../BaseHelper';
 import '@spfxappdev/utility/lib/extensions/StringExtensions';
 import { cssClasses } from '@spfxappdev/utility';

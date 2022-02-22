@@ -194,10 +194,10 @@ export class SettingsReaderService implements ISettingsReaderService {
                     const isInherited: boolean = !isNullOrEmpty(s.WebId) || !isNullOrEmpty(s.SiteId) || !isNullOrEmpty(s.ServerRelativeWebUrl);
                     
                     if(!isInherited) {
-                        return this.getSettingsFromCurrentSite(key, defSettings);
+                        return this.getSettingsFromCurrentSite(k, defSettings);
                     }
 
-                    return this.getSettingsFromInhertitedSite(key, s.ServerRelativeWebUrl, defSettings);
+                    return this.getSettingsFromInhertitedSite(k, s.ServerRelativeWebUrl, defSettings);
                 };
 
                 if(isset(this.generalSettings)) {
