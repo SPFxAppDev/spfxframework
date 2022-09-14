@@ -205,7 +205,7 @@ export class Uri implements IUrlContext {
         }
 
         if (relativeUrl.length > 0 &&
-            urlToCombine.Contains(relativeUrl)) {
+            urlToCombine.StartsWith(relativeUrl)) {
             urlToCombine = urlToCombine.substr(urlToCombine.IndexOf(relativeUrl) + urlToCombine.length);
         }
 
@@ -273,6 +273,7 @@ export class SPUri extends Uri implements ISPUrlContext {
     public ServerRelativeWebUrl: string;
     public AbsoluteSiteUrl: string;
     public ServerRelativeSiteUrl: string;
+    public ListUrl: string;
 
     public constructor(ctx: BaseComponentContext|PageContext) {
         const pageContext = ctx instanceof BaseComponentContext ? ctx.pageContext : ctx;
@@ -281,6 +282,7 @@ export class SPUri extends Uri implements ISPUrlContext {
         this.ServerRelativeWebUrl = pageContext.web.serverRelativeUrl;
         this.AbsoluteSiteUrl = pageContext.site.absoluteUrl;
         this.ServerRelativeSiteUrl = pageContext.web.serverRelativeUrl;
+        this.ListUrl = pageContext.list.serverRelativeUrl;
     }
 
     public GetWebAppUrl(): string {
@@ -317,6 +319,16 @@ export class SPUri extends Uri implements ISPUrlContext {
     public MakeRelativeWebUrl(urlToCombine: string): string {
         const relativeWebUrl: string = this.ServerRelativeWebUrl;
         return this.MakeRelativeUrl(relativeWebUrl, urlToCombine);
+    }
+
+    public GetCurrentFolderURL() {
+        const uri: Uri = new Uri(window.location.href);    
+        const idParam: string = uri.Parameters.get("id", true);
+        const rootParam: string = uri.Parameters.get("RootFolder", true);
+        let url = idParam != null ? idParam : rootParam;
+        let re = new RegExp(`${this.ListUrl}/`, "gi");
+        url = url ? url.replace(re, "") : "";    
+        return url;    
     }
 
     private MakeAbsoluteUrl(absoluteUrl: string, relativeUrl: string, urlToCombine: string): string {
