@@ -1,4 +1,4 @@
-import { getUrlParameter, isNullOrEmpty } from '@spfxappdev/utility';
+import { getDeepOrDefault, getUrlParameter, isNullOrEmpty } from '@spfxappdev/utility';
 import '@spfxappdev/utility/lib/extensions/ArrayExtensions';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 import { PageContext } from '@microsoft/sp-page-context';
@@ -282,7 +282,7 @@ export class SPUri extends Uri implements ISPUrlContext {
         this.ServerRelativeWebUrl = pageContext.web.serverRelativeUrl;
         this.AbsoluteSiteUrl = pageContext.site.absoluteUrl;
         this.ServerRelativeSiteUrl = pageContext.web.serverRelativeUrl;
-        this.ListUrl = pageContext.list.serverRelativeUrl;
+        this.ListUrl = getDeepOrDefault(pageContext, "list.serverRelativeUrl", "");
     }
 
     public GetWebAppUrl(): string {
