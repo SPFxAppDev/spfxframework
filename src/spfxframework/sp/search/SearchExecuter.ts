@@ -1,5 +1,4 @@
-import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { ApplicationCustomizerContext } from '@microsoft/sp-application-base';
+import { BaseComponentContext } from '@microsoft/sp-component-base';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { SPUri } from '../../utility/UrlHelper';
 import { ISPFxAppDevBaseHelper, GeneralHelper } from '../BaseHelper';
@@ -261,7 +260,7 @@ export class JsonSearchResult implements IJsonSearchResult {
 
 export class SearchExecuter {
 
-    protected Context: WebPartContext|ApplicationCustomizerContext;
+    protected Context: BaseComponentContext;
 
     protected readonly PeopleSearchResultSourceId: string = 'B09A7990-05EA-4AF9-81EF-EDFAB16C4E31';
 
@@ -277,7 +276,7 @@ export class SearchExecuter {
 
     private loggingCategory: string = 'SearchExecuter';
 
-    public constructor(ctx: WebPartContext|ApplicationCustomizerContext, customLoggingCategory: string = null) {
+    public constructor(ctx: BaseComponentContext, customLoggingCategory: string = null) {
         this.Context = ctx;
 
         this.helper = {
@@ -322,7 +321,7 @@ export class SearchExecuter {
             requestUrl += `&selectproperties='` + properties + `'`;
         }
 
-        const ctx: WebPartContext|ApplicationCustomizerContext = this.Context;
+        const ctx: BaseComponentContext = this.Context;
         // Logger.Log('SearchExecuter.MakeSearchRequest make request: ' + requestUrl, this.loggingCategory, LogType.Log, enableLogging);
         return new Promise<JsonSearchResult>((resolve, reject) => {
             ctx.spHttpClient.get(requestUrl,

@@ -281,7 +281,7 @@ export class SPUri extends Uri implements ISPUrlContext {
         this.AbsoluteWebUrl = pageContext.web.absoluteUrl;
         this.ServerRelativeWebUrl = pageContext.web.serverRelativeUrl;
         this.AbsoluteSiteUrl = pageContext.site.absoluteUrl;
-        this.ServerRelativeSiteUrl = pageContext.web.serverRelativeUrl;
+        this.ServerRelativeSiteUrl = pageContext.site.serverRelativeUrl;
         this.ListUrl = getDeepOrDefault(pageContext, "list.serverRelativeUrl", "");
     }
 

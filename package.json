@@ -1,6 +1,6 @@
 {
   "name": "@spfxappdev/framework",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -22,17 +22,17 @@
   },
   "homepage": "https://github.com/SPFxAppDev/spfxframework#readme",
   "devDependencies": {
-    "@microsoft/decorators": "^1.13.0",
-    "@microsoft/sp-application-base": "^1.13.0",
-    "@microsoft/sp-core-library": "^1.13.0",
-    "@microsoft/sp-tslint-rules": "^1.13.0",
-    "@microsoft/sp-webpart-base": "1.13.0",
+    "@microsoft/decorators": "^1.17.3",
+    "@microsoft/sp-application-base": "^1.17.3",
+    "@microsoft/sp-core-library": "^1.17.3",
+    "@microsoft/sp-tslint-rules": "^1.17.3",
+    "@microsoft/sp-webpart-base": "1.17.3",
     "@types/es6-promise": "0.0.32",
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.5"
   },
   "dependencies": {
     "@spfxappdev/logger": "latest",
